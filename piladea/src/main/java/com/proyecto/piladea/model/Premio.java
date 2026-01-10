@@ -49,4 +49,8 @@ public class Premio {
 
     @OneToMany(mappedBy = "premio", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Cupon> cupones;
+
+    @ManyToOne
+    @JoinColumn(name = "perfil_id", nullable = false)
+    private Perfil perfil; // El usuario que canjea el premio
 }

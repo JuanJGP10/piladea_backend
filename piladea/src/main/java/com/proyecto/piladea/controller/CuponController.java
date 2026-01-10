@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.proyecto.piladea.dto.CuponResponseDTO;
+import com.proyecto.piladea.dto.CuponDTO;
 import com.proyecto.piladea.model.Cupon;
 import com.proyecto.piladea.service.CuponService;
 
@@ -27,16 +27,16 @@ public class CuponController {
         this.cuponService = cuponService;
     }
 
-    // GET: Ver mis cupones
-    // URL: http://localhost:8080/api/cupones/usuario/5
-    @GetMapping("/usuario/{perfilId}")
-    public ResponseEntity<List<CuponResponseDTO>> listarMisCupones(@PathVariable Long perfilId) {
-        List<CuponResponseDTO> cupones = cuponService.obtenerCuponesDeUsuario(perfilId);
-        if (cupones.isEmpty()) {
-            return ResponseEntity.noContent().build(); // Devuelve 204 si está vacío
-        }
-        return ResponseEntity.ok(cupones); // Devuelve 200 y la lista
-    }
+    // // GET: Ver mis cupones
+    // // URL: http://localhost:8080/api/cupones/usuario/5
+    // @GetMapping("/usuario/{perfilId}")
+    // public ResponseEntity<List<CuponDTO>> listarMisCupones(@PathVariable Long perfilId) {
+    //     List<CuponDTO> cupones = cuponService.obtenerCuponesDeUsuario(perfilId);
+    //     if (cupones.isEmpty()) {
+    //         return ResponseEntity.noContent().build(); // Devuelve 204 si está vacío
+    //     }
+    //     return ResponseEntity.ok(cupones); // Devuelve 200 y la lista
+    // }
 
     
 

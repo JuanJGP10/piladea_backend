@@ -32,26 +32,28 @@ import lombok.ToString;
 @Table(name = "perfiles")
 public class Perfil {
 
-    // Información personal del usuario: datos, listas de objetos relacionados y monedas
+    // Información personal del usuario: datos, listas de objetos relacionados y
+    // monedas
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
     private String apellido;
     private LocalDate fechaNacimiento;
-    private String correo;
+    private String email;
     private String sexo;
     private String rutaImagen;
     private int bicicoins = 0;
     private LocalDate fechaCreacion;
     private int distanciaTotal;
-    
+
     @OneToOne
     @JoinColumn(name = "usuario_id", unique = true)
     private Usuario usuario;
 
+    // La Clase destino creo q no tiene sentido
     @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude 
+    @ToString.Exclude
     private Set<Destino> destinos;
 
     @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,21 +62,19 @@ public class Perfil {
 
     @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    private Set<Premio> premios;
+
+    // Creo q guardar todas las rutas tampoco para eso tnemos los trayectos
+    // guardados
+    @OneToMany(mappedBy = "perfil", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private Set<Trayecto> rutas;
 
     @ManyToMany
-    @JoinTable(
-        name = "perfil_trayecto_guardado",
-        joinColumns = @JoinColumn(name = "perfil_id"),
-        inverseJoinColumns = @JoinColumn(name = "trayecto_id")
-    )
+    @JoinTable(name = "perfil_trayecto_guardado", joinColumns = @JoinColumn(name = "perfil_id"), inverseJoinColumns = @JoinColumn(name = "trayecto_id"))
     private Set<Trayecto> trayectosGuardados;
 
     @ManyToMany
-    @JoinTable(
-        name = "perfil_cupon_guardado",
-        joinColumns = @JoinColumn(name = "perfil_id"),
-        inverseJoinColumns = @JoinColumn(name = "cupon_id")
-    )
+    @JoinTable(name = "perfil_cupon_guardado", joinColumns = @JoinColumn(name = "perfil_id"), inverseJoinColumns = @JoinColumn(name = "cupon_id"))
     private Set<Cupon> cuponesGuardados;
 }

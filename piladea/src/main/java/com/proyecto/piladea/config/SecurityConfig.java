@@ -22,25 +22,45 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(csrf -> csrf.disable())
-        // PUEDES QUITAR ESTA LÍNEA (o dejarla, ya no importa porque el filtro manual va primero)
-        // .cors(Customizer.withDefaults()) 
-        
-        .authorizeHttpRequests(auth -> auth
-            // Mantén esto para que OPTIONS pase sin pedir token
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .requestMatchers("/auth/**").permitAll()
-            .anyRequest().authenticated()
-        )
-        // ... resto igual ...
-        .sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
-        .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            // 1. CSRF se desactiva en APIs REST (stateless)
+            .csrf(csrf -> csrf.disable())
+            
+            // 2. CORS debe estar activo para que React pueda llamar a Java
+            .cors(Customizer.withDefaults()) 
 
-    return http.build();
-}
+            // 3. Gestión de rutas (AQUÍ ESTÁ LA CLAVE)
+            .authorizeHttpRequests(auth -> auth
+                // A. Permitir preflight requests (necesario para React)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                
+                // B. Rutas PÚBLICAS explícitas (Login y Registro)
+                // OJO: Ya NO usamos /auth/**, sino las rutas exactas.
+                .requestMatchers("/auth/login", "/auth/register").permitAll()
+                
+                // C. Rutas de documentación (Swagger/OpenAPI) - Opcional pero recomendado
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                // 👇👇👇 AÑADE ESTO IMPRESCINDIBLE PARA DEBUGEAR 👇👇👇
+                .requestMatchers("/error").permitAll()
+                
+                // D. Rutas de archivos estáticos (imágenes de avatares, etc.)
+                .requestMatchers("/uploads/**", "/images/**").permitAll()
+
+                // E. Todo lo demás (incluido /auth/me) requiere TOKEN
+                .anyRequest().authenticated()
+            )
+
+            // 4. Gestión de sesión: SIN ESTADO (Stateless)
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+
+            // 5. Providers y Filtros
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 }

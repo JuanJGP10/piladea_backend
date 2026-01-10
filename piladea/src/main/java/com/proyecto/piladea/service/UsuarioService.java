@@ -1,7 +1,10 @@
 package com.proyecto.piladea.service;
 
+import org.springframework.stereotype.Service;
+
 import com.proyecto.piladea.repository.UsuarioRepository;
 
+@Service
 public class UsuarioService {
     
     private final UsuarioRepository usuarioRepository;
