@@ -15,7 +15,7 @@ public class PerfilService {
     public PerfilResumenDTO obtenerPerfilResumenPorEmail(String email) {
         // Buscamos por la relación con el usuario
         Perfil perfil = perfilRepository.findByUsuarioEmail(email);
-
+        
         // Protección contra NullPointerException si el registro falló
         if (perfil == null) {
             return PerfilResumenDTO.builder()
